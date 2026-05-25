@@ -926,6 +926,21 @@ a {
   box-shadow: var(--shadow-md);
 }
 
+.big-secondary-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
 .big-secondary-body {
   flex: 1;
   min-width: 0;
@@ -1181,4 +1196,22 @@ a {
     top: 18px;
     right: 18px;
   }
+}
+
+/* ===== Subject tag (Umumiy mode) ===== */
+.subject-tag-row {
+  margin-bottom: 12px;
+}
+
+.subject-tag-chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
 }

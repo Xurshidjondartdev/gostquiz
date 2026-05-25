@@ -5,7 +5,7 @@ import { pickRandomQuestion } from '../lib/quiz.js';
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 const RECENT_WINDOW = 30;
 
-export default function EndlessQuizScreen({ subject, onExit }) {
+export default function EndlessQuizScreen({ subject, onExit, showSubjectTag = false }) {
   const seenRef = useRef([]);
   const [current, setCurrent] = useState(() => pickRandomQuestion(subject, new Set()));
   const [selected, setSelected] = useState(null);
@@ -70,6 +70,11 @@ export default function EndlessQuizScreen({ subject, onExit }) {
         </div>
       </div>
 
+      {showSubjectTag && current.subjectName && (
+        <div className="subject-tag-row">
+          <span className="subject-tag-chip">{current.subjectName}</span>
+        </div>
+      )}
       <h2 className="question">{current.question}</h2>
 
       <div className="options">

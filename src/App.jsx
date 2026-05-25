@@ -25,10 +25,22 @@ const SCREEN = {
   MODE: 'mode',
   TIMED: 'timed',
   ENDLESS: 'endless',
+  UMUMIY: 'umumiy',
   EXAM: 'exam',
   TIMED_RESULT: 'timed-result',
   ENDLESS_RESULT: 'endless-result',
+  UMUMIY_RESULT: 'umumiy-result',
   EXAM_RESULT: 'exam-result',
+};
+
+const UMUMIY_SUBJECT = {
+  id: 'umumiy',
+  name: 'Umumiy',
+  tagline: '5 fandan aralash',
+  glyph: '⊕',
+  questions: SUBJECTS.flatMap((s) =>
+    s.questions.map((q) => ({ ...q, subjectId: s.id, subjectName: s.name })),
+  ),
 };
 
 export default function App() {
@@ -49,6 +61,10 @@ export default function App() {
 
   const handlePickSubjects = useCallback(() => setScreen(SCREEN.SUBJECTS), []);
   const handlePickExam = useCallback(() => setScreen(SCREEN.EXAM), []);
+  const handlePickUmumiy = useCallback(() => {
+    setSubject(UMUMIY_SUBJECT);
+    setScreen(SCREEN.UMUMIY);
+  }, []);
 
   const handlePickSubject = useCallback((s) => {
     setSubject(s);
@@ -83,6 +99,11 @@ export default function App() {
   const handleEndlessExit = useCallback((stats) => {
     setEndlessStats(stats);
     setScreen(SCREEN.ENDLESS_RESULT);
+  }, []);
+
+  const handleUmumiyExit = useCallback((stats) => {
+    setEndlessStats(stats);
+    setScreen(SCREEN.UMUMIY_RESULT);
   }, []);
 
   const handleExamFinish = useCallback(
@@ -151,6 +172,7 @@ export default function App() {
             onStartName={handleStartName}
             onPickExam={handlePickExam}
             onPickSubjects={handlePickSubjects}
+            onPickUmumiy={handlePickUmumiy}
             onResetData={handleResetAll}
           />
         )}
@@ -183,6 +205,10 @@ export default function App() {
           <EndlessQuizScreen subject={subject} onExit={handleEndlessExit} />
         )}
 
+        {screen === SCREEN.UMUMIY && (
+          <EndlessQuizScreen subject={UMUMIY_SUBJECT} onExit={handleUmumiyExit} showSubjectTag />
+        )}
+
         {screen === SCREEN.EXAM && (
           <ExamScreen
             subjects={SUBJECTS}
@@ -206,6 +232,15 @@ export default function App() {
             subject={subject}
             stats={endlessStats}
             onRetry={() => setScreen(SCREEN.ENDLESS)}
+            onHome={goHome}
+          />
+        )}
+
+        {screen === SCREEN.UMUMIY_RESULT && endlessStats && (
+          <EndlessResultScreen
+            subject={UMUMIY_SUBJECT}
+            stats={endlessStats}
+            onRetry={() => setScreen(SCREEN.UMUMIY)}
             onHome={goHome}
           />
         )}

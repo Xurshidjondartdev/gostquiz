@@ -9,6 +9,7 @@ export default function StartScreen({
   onStartName,
   onPickExam,
   onPickSubjects,
+  onPickUmumiy,
   onResetData,
 }) {
   const [name, setName] = useState(initialName ?? '');
@@ -47,6 +48,14 @@ export default function StartScreen({
       return;
     }
     onPickSubjects();
+  }
+
+  function handlePickUmumiy() {
+    if (!hasName) {
+      setError("Avval ismingizni kiriting va saqlang");
+      return;
+    }
+    onPickUmumiy();
   }
 
   return (
@@ -100,10 +109,28 @@ export default function StartScreen({
           <ExamCta onStart={handlePickExam} />
 
           <button type="button" className="big-secondary" onClick={handlePickSubjects}>
+            <div className="big-secondary-icon" aria-hidden>
+              ≡
+            </div>
             <div className="big-secondary-body">
               <div className="big-secondary-title">Fan bo'yicha mashq</div>
               <div className="big-secondary-tag">
                 Vaqtli rejim (20 savol) yoki cheksiz «Barcha testlar» rejimi
+              </div>
+            </div>
+            <span aria-hidden className="big-secondary-arrow">
+              →
+            </span>
+          </button>
+
+          <button type="button" className="big-secondary" onClick={handlePickUmumiy}>
+            <div className="big-secondary-icon" aria-hidden>
+              ⊕
+            </div>
+            <div className="big-secondary-body">
+              <div className="big-secondary-title">Umumiy</div>
+              <div className="big-secondary-tag">
+                5 fandan barcha 986+ savol · aralash random · vaqt cheklovsiz
               </div>
             </div>
             <span aria-hidden className="big-secondary-arrow">
