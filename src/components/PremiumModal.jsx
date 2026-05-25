@@ -3,7 +3,7 @@ import Modal from './Modal.jsx';
 import { isPremiumPhone } from '../data/allowedPhones.js';
 import { formatLive, isValidPhone, normalizePhone } from '../lib/phone.js';
 
-const ADMIN_CONTACT = '+998 90 000 00 00'; // bu yerni o'z aloqa raqamingiz bilan almashtiring
+const ADMIN_CONTACT = '+998 77 076 84 30';
 
 export default function PremiumModal({ open, featureName, onClose, onActivate }) {
   const [phoneInput, setPhoneInput] = useState('+998 ');
