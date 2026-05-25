@@ -1,9 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import TopBar from './components/TopBar.jsx';
 import StartScreen from './screens/StartScreen.jsx';
 import SubjectScreen from './screens/SubjectScreen.jsx';
-import QuizScreen from './screens/QuizScreen.jsx';
+import ModeScreen from './screens/ModeScreen.jsx';
+import TimedQuizScreen from './screens/TimedQuizScreen.jsx';
+import EndlessQuizScreen from './screens/EndlessQuizScreen.jsx';
+import ExamScreen from './screens/ExamScreen.jsx';
 import ResultScreen from './screens/ResultScreen.jsx';
+import EndlessResultScreen from './screens/EndlessResultScreen.jsx';
+import ExamResultScreen from './screens/ExamResultScreen.jsx';
+import { SUBJECTS } from './data/subjects/index.js';
 import {
   clearAll,
   getHistory,
@@ -13,40 +19,51 @@ import {
   storageAvailable,
 } from './lib/storage.js';
 
-const SCREENS = {
+const SCREEN = {
   HOME: 'home',
-  SUBJECT: 'subject',
-  QUIZ: 'quiz',
-  RESULT: 'result',
+  SUBJECTS: 'subjects',
+  MODE: 'mode',
+  TIMED: 'timed',
+  ENDLESS: 'endless',
+  EXAM: 'exam',
+  TIMED_RESULT: 'timed-result',
+  ENDLESS_RESULT: 'endless-result',
+  EXAM_RESULT: 'exam-result',
 };
 
-const SESSION_OPTS = { shuffleQuestions: true, shuffleOptions: true, questionCount: 20 };
-
 export default function App() {
-  const [screen, setScreen] = useState(SCREENS.HOME);
+  const [screen, setScreen] = useState(SCREEN.HOME);
   const [studentName, setStudentName] = useState(() => getUserName());
   const [subject, setSubject] = useState(null);
-  const [result, setResult] = useState(null);
+  const [timedResult, setTimedResult] = useState(null);
+  const [endlessStats, setEndlessStats] = useState(null);
+  const [examResult, setExamResult] = useState(null);
   const [history, setHistory] = useState(() => getHistory());
 
-  useEffect(() => {
-    document.documentElement.style.setProperty('--accent', '#4f46e5');
-  }, []);
+  const goHome = useCallback(() => setScreen(SCREEN.HOME), []);
 
-  const handleStart = useCallback((name) => {
+  const handleStartName = useCallback((name) => {
     setStudentName(name);
     saveUserName(name);
-    setScreen(SCREENS.SUBJECT);
   }, []);
+
+  const handlePickSubjects = useCallback(() => setScreen(SCREEN.SUBJECTS), []);
+  const handlePickExam = useCallback(() => setScreen(SCREEN.EXAM), []);
 
   const handlePickSubject = useCallback((s) => {
     setSubject(s);
-    setScreen(SCREENS.QUIZ);
+    setScreen(SCREEN.MODE);
   }, []);
 
-  const handleFinish = useCallback(
+  const handlePickMode = useCallback((mode) => {
+    setScreen(mode === 'timed' ? SCREEN.TIMED : SCREEN.ENDLESS);
+  }, []);
+
+  const handleTimedFinish = useCallback(
     (r) => {
       const entry = {
+        type: 'subject',
+        mode: 'timed',
         studentName,
         subjectId: subject.id,
         subjectName: subject.name,
@@ -57,10 +74,42 @@ export default function App() {
         completedAt: Date.now(),
       };
       setHistory(pushHistory(entry));
-      setResult(r);
-      setScreen(SCREENS.RESULT);
+      setTimedResult(r);
+      setScreen(SCREEN.TIMED_RESULT);
     },
     [studentName, subject],
+  );
+
+  const handleEndlessExit = useCallback((stats) => {
+    setEndlessStats(stats);
+    setScreen(SCREEN.ENDLESS_RESULT);
+  }, []);
+
+  const handleExamFinish = useCallback(
+    (r) => {
+      const entry = {
+        type: 'exam',
+        studentName,
+        subjectName: 'Sinov imtihoni',
+        totalQuestions: r.totalQuestions,
+        correctCount: r.correctCount,
+        wrongCount: r.wrongCount,
+        scorePercent: r.scorePercent,
+        durationSec: r.durationSec,
+        sections: r.sections.map((sec) => ({
+          subjectId: sec.subjectId,
+          subjectName: sec.subjectName,
+          correct: sec.correct,
+          total: sec.total,
+          scorePercent: sec.scorePercent,
+        })),
+        completedAt: Date.now(),
+      };
+      setHistory(pushHistory(entry));
+      setExamResult(r);
+      setScreen(SCREEN.EXAM_RESULT);
+    },
+    [studentName],
   );
 
   const handleResetAll = useCallback(() => {
@@ -68,15 +117,15 @@ export default function App() {
     setStudentName('');
     setHistory([]);
     setSubject(null);
-    setResult(null);
-    setScreen(SCREENS.HOME);
+    setTimedResult(null);
+    setEndlessStats(null);
+    setExamResult(null);
+    setScreen(SCREEN.HOME);
   }, []);
-
-  const goHome = useCallback(() => setScreen(SCREENS.HOME), []);
 
   return (
     <div className="app">
-      <TopBar canGoHome={screen !== SCREENS.HOME} onHome={goHome} />
+      <TopBar canGoHome={screen !== SCREEN.HOME} onHome={goHome} />
 
       <main className="main">
         {!storageAvailable && (
@@ -95,16 +144,18 @@ export default function App() {
           </div>
         )}
 
-        {screen === SCREENS.HOME && (
+        {screen === SCREEN.HOME && (
           <StartScreen
             initialName={studentName}
             history={history}
-            onStart={handleStart}
+            onStartName={handleStartName}
+            onPickExam={handlePickExam}
+            onPickSubjects={handlePickSubjects}
             onResetData={handleResetAll}
           />
         )}
 
-        {screen === SCREENS.SUBJECT && (
+        {screen === SCREEN.SUBJECTS && (
           <SubjectScreen
             studentName={studentName}
             onPick={handlePickSubject}
@@ -112,21 +163,58 @@ export default function App() {
           />
         )}
 
-        {screen === SCREENS.QUIZ && subject && (
-          <QuizScreen
+        {screen === SCREEN.MODE && subject && (
+          <ModeScreen
             subject={subject}
-            sessionOptions={SESSION_OPTS}
-            onFinish={handleFinish}
-            onExit={() => setScreen(SCREENS.SUBJECT)}
+            onPick={handlePickMode}
+            onBack={() => setScreen(SCREEN.SUBJECTS)}
           />
         )}
 
-        {screen === SCREENS.RESULT && subject && result && (
+        {screen === SCREEN.TIMED && subject && (
+          <TimedQuizScreen
+            subject={subject}
+            onFinish={handleTimedFinish}
+            onExit={() => setScreen(SCREEN.MODE)}
+          />
+        )}
+
+        {screen === SCREEN.ENDLESS && subject && (
+          <EndlessQuizScreen subject={subject} onExit={handleEndlessExit} />
+        )}
+
+        {screen === SCREEN.EXAM && (
+          <ExamScreen
+            subjects={SUBJECTS}
+            onFinish={handleExamFinish}
+            onExit={goHome}
+          />
+        )}
+
+        {screen === SCREEN.TIMED_RESULT && subject && timedResult && (
           <ResultScreen
             studentName={studentName}
             subject={subject}
-            result={result}
-            onRetry={() => setScreen(SCREENS.QUIZ)}
+            result={timedResult}
+            onRetry={() => setScreen(SCREEN.TIMED)}
+            onHome={goHome}
+          />
+        )}
+
+        {screen === SCREEN.ENDLESS_RESULT && subject && endlessStats && (
+          <EndlessResultScreen
+            subject={subject}
+            stats={endlessStats}
+            onRetry={() => setScreen(SCREEN.ENDLESS)}
+            onHome={goHome}
+          />
+        )}
+
+        {screen === SCREEN.EXAM_RESULT && examResult && (
+          <ExamResultScreen
+            studentName={studentName}
+            result={examResult}
+            onRetry={() => setScreen(SCREEN.EXAM)}
             onHome={goHome}
           />
         )}

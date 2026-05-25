@@ -1,19 +1,20 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import Modal from '../components/Modal.jsx';
-import { buildSession } from '../lib/quiz.js';
+import Timer from '../components/Timer.jsx';
+import { buildTimedSession } from '../lib/quiz.js';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
+const PER_QUESTION_SEC = 30;
+const QUESTION_COUNT = 20;
 
-export default function QuizScreen({ subject, sessionOptions, onFinish, onExit }) {
-  const questions = useMemo(
-    () => buildSession(subject, sessionOptions),
-    [subject, sessionOptions],
-  );
+export default function TimedQuizScreen({ subject, onFinish, onExit }) {
+  const questions = useMemo(() => buildTimedSession(subject, QUESTION_COUNT), [subject]);
   const total = questions.length;
 
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState(() => questions.map(() => null));
   const [confirmExit, setConfirmExit] = useState(false);
+  const finishedRef = useRef(false);
 
   const current = questions[idx];
   const answer = answers[idx];
@@ -26,12 +27,49 @@ export default function QuizScreen({ subject, sessionOptions, onFinish, onExit }
     0,
   );
 
+  const finish = useCallback(
+    (latest) => {
+      if (finishedRef.current) return;
+      finishedRef.current = true;
+      const finalAnswers = latest || answers;
+      const correct = finalAnswers.reduce(
+        (acc, a, i) => acc + (a && a.selected === questions[i].correctAnswer ? 1 : 0),
+        0,
+      );
+      onFinish({
+        correctCount: correct,
+        totalQuestions: total,
+        wrongCount: total - correct,
+        scorePercent: Math.round((correct / total) * 100),
+        answers: finalAnswers,
+        questions,
+        mode: 'timed',
+      });
+    },
+    [answers, onFinish, questions, total],
+  );
+
   function selectOption(i) {
     if (revealed) return;
     const isCorrect = i === current.correctAnswer;
     setAnswers((prev) => {
       const next = prev.slice();
-      next[idx] = { selected: i, revealed: true, correct: isCorrect };
+      next[idx] = { selected: i, revealed: true, correct: isCorrect, timedOut: false };
+      return next;
+    });
+  }
+
+  function handleTimeout() {
+    if (revealed) return;
+    setAnswers((prev) => {
+      if (prev[idx]) return prev;
+      const next = prev.slice();
+      next[idx] = { selected: null, revealed: true, correct: false, timedOut: true };
+      if (idx === total - 1) {
+        setTimeout(() => finish(next), 800);
+      } else {
+        setTimeout(() => setIdx((i) => i + 1), 800);
+      }
       return next;
     });
   }
@@ -42,46 +80,41 @@ export default function QuizScreen({ subject, sessionOptions, onFinish, onExit }
   function goPrev() {
     if (idx > 0) setIdx(idx - 1);
   }
-  function finish() {
-    onFinish({
-      correctCount,
-      totalQuestions: total,
-      wrongCount: total - correctCount,
-      scorePercent: Math.round((correctCount / total) * 100),
-      answers,
-      questions,
-    });
-  }
-
-  const progressPct = (answeredCount / total) * 100;
 
   return (
-    <div className="container fade-up" key={idx}>
+    <div className="container fade-up">
       <div className="quiz-head">
         <div>
-          <div className="quiz-subject">{subject.name}</div>
+          <div className="quiz-subject">{subject.name} · Vaqtli</div>
           <div className="quiz-counter">
             Savol <strong>{idx + 1}</strong> / {total}
           </div>
         </div>
-        <button
-          className="iconbtn"
-          type="button"
-          onClick={() => setConfirmExit(true)}
-          aria-label="Testdan chiqish"
-        >
-          ✕ <span>Chiqish</span>
-        </button>
+        <div className="quiz-head-right">
+          <Timer
+            seconds={PER_QUESTION_SEC}
+            resetKey={idx}
+            paused={revealed}
+            urgentAt={10}
+            onExpire={handleTimeout}
+          />
+          <button
+            className="iconbtn"
+            type="button"
+            onClick={() => setConfirmExit(true)}
+            aria-label="Testdan chiqish"
+          >
+            ✕ <span>Chiqish</span>
+          </button>
+        </div>
       </div>
 
       <div
         className="progress"
         role="progressbar"
-        aria-valuenow={Math.round(progressPct)}
-        aria-valuemin={0}
-        aria-valuemax={100}
+        aria-valuenow={Math.round(((idx + 1) / total) * 100)}
       >
-        <div className="progress-fill" style={{ width: progressPct + '%' }} />
+        <div className="progress-fill" style={{ width: ((idx + 1) / total) * 100 + '%' }} />
       </div>
 
       <h2 className="question">{current.question}</h2>
@@ -113,7 +146,6 @@ export default function QuizScreen({ subject, sessionOptions, onFinish, onExit }
               className={cls}
               onClick={() => selectOption(i)}
               disabled={revealed}
-              aria-pressed={selected === i}
             >
               <span className="option-letter">{letter}</span>
               <span className="option-text">{opt}</span>
@@ -123,7 +155,23 @@ export default function QuizScreen({ subject, sessionOptions, onFinish, onExit }
         })}
       </div>
 
-      {revealed && current.explanation && (
+      {revealed && answer?.timedOut && (
+        <div
+          className="explain"
+          style={{
+            background: 'var(--danger-soft)',
+            borderColor: 'var(--danger)',
+            color: 'var(--danger)',
+          }}
+        >
+          <span className="explain-label" style={{ color: 'var(--danger)' }}>
+            Vaqt tugadi
+          </span>
+          To'g'ri javob: <strong>{current.options[current.correctAnswer]}</strong>
+        </div>
+      )}
+
+      {revealed && !answer?.timedOut && current.explanation && (
         <div className="explain">
           <span className="explain-label">Izoh</span>
           {current.explanation}
@@ -136,12 +184,7 @@ export default function QuizScreen({ subject, sessionOptions, onFinish, onExit }
         </button>
         <div className="btn-row">
           {isLast ? (
-            <button
-              className="btn btn-primary"
-              onClick={finish}
-              disabled={answeredCount < total}
-              title={answeredCount < total ? 'Avval barcha savollarga javob bering' : ''}
-            >
+            <button className="btn btn-primary" onClick={() => finish()} disabled={!revealed}>
               Yakunlash ({correctCount}/{total})
             </button>
           ) : (
@@ -173,7 +216,9 @@ export default function QuizScreen({ subject, sessionOptions, onFinish, onExit }
           </>
         }
       >
-        <p>Joriy javoblaringiz saqlanmaydi.</p>
+        <p>
+          Joriy {answeredCount}/{total} javoblaringiz saqlanmaydi.
+        </p>
       </Modal>
     </div>
   );

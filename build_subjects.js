@@ -74,6 +74,8 @@ function isHeaderRow(row) {
 function extractQuestions(filePath, sheetName) {
   const rows = rowsFromSheet(filePath, sheetName);
   const out = [];
+  const seen = new Set();
+  let skippedDupes = 0;
   for (const row of rows) {
     if (!row || row.length < 6) continue;
     if (isHeaderRow(row)) continue;
@@ -92,11 +94,21 @@ function extractQuestions(filePath, sheetName) {
     if (allOpts.some((s) => s.length > 400)) continue;
     if (question.length > 600) continue;
 
+    const dedupKey = question.trim().toLowerCase();
+    if (seen.has(dedupKey)) {
+      skippedDupes++;
+      continue;
+    }
+    seen.add(dedupKey);
+
     out.push({
       question,
       options: allOpts,
       correctAnswer: 0,
     });
+  }
+  if (skippedDupes > 0) {
+    console.log(`  (${skippedDupes} ta takror savol o'tkazib yuborildi)`);
   }
   return out;
 }

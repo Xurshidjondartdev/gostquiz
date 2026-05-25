@@ -1850,16 +1850,6 @@ export const SUBJECTS = [
         "correctAnswer": 0
       },
       {
-        "question": "Ta’limni tashkil etishning darsdan tashqari shakllariga qaysi guruhdagilar kiradi?",
-        "options": [
-          "To‘garak, praktikum, seminar, konferensiya, maslahat, fakultativ mashg‘ulot, o‘quv ekskursiyalari, mustaqil uy ishlari",
-          "Individual, individual-guruhli, sinf-dars, leksiya-seminar va sinfdan tashqari, auditoriyadan tashqari, maktabdan tashqari ta’lim.",
-          "Ochiq darslar, interfaol darslar",
-          "Differensiyalangan, individuallashtirilgan ta’lim"
-        ],
-        "correctAnswer": 0
-      },
-      {
         "question": "Berilgan javoblardan qaysi biri o’qituvchining avtoritar usu­lida sinf jamoasini boshqaruviga tegishli?",
         "options": [
           "O’qituvchi yakka holda guruh faoliyatini belgilaydi, o’quv­chi­larning so’zsiz bo’ysunishini da’vo qiladi",
@@ -1916,16 +1906,6 @@ export const SUBJECTS = [
           "L.E.Pleskach",
           "V.A.Suxomlinskiy",
           "M.G.Davletshin"
-        ],
-        "correctAnswer": 0
-      },
-      {
-        "question": "Individual pedagogik texnikani shakllantirishda nimalar e’tiborga olinadi?",
-        "options": [
-          "O’qituvchining yoshi, jinsi, mijozi, fe’l-atvori, salomatligi, anatomik va fiziologik xususiyatlari.",
-          "O’qituvchining o’z-o’zini boshqarishda erishadigan yutuqlari, pedagogik mahorati.",
-          "Metodik bilimlar, ta’limning texnologik tomoni, kasbiy qobili­yat­larga ega bo’lish.",
-          "Pedagogik mahoratni mukammal egallash uchun mehnat ko’nikmasi va malakalarini shakllantirish."
         ],
         "correctAnswer": 0
       },
@@ -5176,16 +5156,6 @@ export const SUBJECTS = [
         "correctAnswer": 0
       },
       {
-        "question": "Buxoro xonligida fuqarolarning arz va shikoyatlarini tinglovchi va xal etuvchi amaldor kim?",
-        "options": [
-          "Dodxoh",
-          "Devonbegi",
-          "Ko’kaldosh",
-          "Mirshab"
-        ],
-        "correctAnswer": 0
-      },
-      {
         "question": "Amir Shoh Murodning hukmronlik yillari",
         "options": [
           "1785-1800",
@@ -5372,16 +5342,6 @@ export const SUBJECTS = [
           "Ommaviy ishlardan ozod etilgani uchun xaq to’lash",
           "Xosilni tekshiruvchi va uning miqdorini aniqlovchi amaldorga xaq to’lash",
           "Begar xabarini yetkazgani uchun xaq to’lash"
-        ],
-        "correctAnswer": 0
-      },
-      {
-        "question": "O’rta Osiyo xonliklarida masjid, madrasa va mozoristonlarning sarf-xarajatlari qaysi mulk hisobidan bo’lgan?",
-        "options": [
-          "Vaqf",
-          "Amloq",
-          "Mulki Xur",
-          "Xiroj"
         ],
         "correctAnswer": 0
       },
@@ -5956,16 +5916,6 @@ export const SUBJECTS = [
         "correctAnswer": 0
       },
       {
-        "question": "Oʻzbekiston Respublikasining milliy valyutasi – «soʻm» qachondan muomalaga kiritildi?",
-        "options": [
-          "1994 yil 1 iyuldan",
-          "1991 yil 18 noyabrdan",
-          "1992 yil 8 dekabrdan",
-          "1992 yil 2 iyuldan"
-        ],
-        "correctAnswer": 0
-      },
-      {
         "question": "1991 yilda yurtimizda qaysi allomaning 550 yilligi nishonlangan edi?",
         "options": [
           "Alisher Navoiy",
@@ -6324,16 +6274,6 @@ export const SUBJECTS = [
         "correctAnswer": 0
       },
       {
-        "question": "An’anaviy o‘quv jarayoniga mos qatorlarni aniqlang",
-        "options": [
-          "Tayyor bilimlarni o‘qituvchi tomonidan talabalarga etkazilishi",
-          "Tizimiy yondoshuv asosida o‘quv jarayonini loyihalash",
-          "Andoza ko‘rinishidagi, kutilgan natija shaklidagi o‘quv maqsadini mumkin qadar aniqlashtirish",
-          "Axborotlar bilan mustaqil ishlash"
-        ],
-        "correctAnswer": 0
-      },
-      {
         "question": "Grafikli organayzerlar nima?",
         "options": [
           "Fikriy jarayonlarni ko‘rgazmali taqdim etish vositasi",
@@ -6670,16 +6610,6 @@ export const SUBJECTS = [
           "Muammoli ta’lim metodlari",
           "Izlanishli metod (evristika)",
           "Ilmiy tadqiqotchilik metodida"
-        ],
-        "correctAnswer": 0
-      },
-      {
-        "question": "Ma’ruza - o‘qitishni tashkil etishning yetakchi shakli hisoblanib, quyidagi vazifalarni amalga oshirishga imkon beradi:",
-        "options": [
-          "yo‘naltirish, axborot berish, metodologik, tarbiyalovchi, rivojlantiruvchilik",
-          "yo‘naltirish, axborot berish, nazorat qilish, umumlashtirish, baholash",
-          "yo‘naltirish, metodologik, nazorat qilish, umumlashtirish, baholash",
-          "yo‘naltirish, nazorat qilish, umumlashtirish, baholash"
         ],
         "correctAnswer": 0
       },
@@ -8052,16 +7982,6 @@ export const SUBJECTS = [
           "«metod»"
         ],
         "correctAnswer": 0
-      },
-      {
-        "question": "Metod nima?",
-        "options": [
-          "(yunoncha metodos –nazariya, bilim va tadqiqot yo‘llari) – u yoki bu maqsadlarga erishish yo‘llari, uslublari, aniq va konkret vazifalarni hal etish usullari",
-          "Lotincha metodos - bilim , nazariya, ilmiy tadqiqot yo‘llarini o‘rganadi",
-          "Lotincha metodos, falsafiy yondashuv demakdir",
-          "Lotincha metodos, maxsus tarixiy fanlarni tahlil qilishda yordam beradi"
-        ],
-        "correctAnswer": 0
       }
     ]
   },
@@ -8962,82 +8882,12 @@ export const SUBJECTS = [
         "correctAnswer": 0
       },
       {
-        "question": "Hozirgi zamon psixologiya fanining predmeti qaysi javobda to‘g‘ri aks ettirilgan?",
-        "options": [
-          "psixik faktlarni, ularning qonuniyatlarini, mexanizmlarini o‘rganuvchi fandir",
-          "kishining ongini o‘rganuvchi fandir",
-          "ruh, jon haqidagi fandir",
-          "kishining hatti-harakati, xulq atvorini o‘rganuvchi fandir"
-        ],
-        "correctAnswer": 0
-      },
-      {
-        "question": "Sezgi psixologik hodisalarning qaysi guruhiga (turkumga) kiradi?",
-        "options": [
-          "psixik jarayonlarga",
-          "psixik holatlarga",
-          "psixik xususiyatlarga",
-          "Hissiy-irodaviy jarayon"
-        ],
-        "correctAnswer": 0
-      },
-      {
-        "question": "Diqqat psixologik hodisalarning qaysi guruhi (turkumi)ga kiradi?",
-        "options": [
-          "Psixik jarayonlarga",
-          "Psixik holatlarga",
-          "psixik xususiyatlarga",
-          "parapsixologik hodisalarga"
-        ],
-        "correctAnswer": 0
-      },
-      {
-        "question": "Kuzatish metodi turini aniqlang?",
-        "options": [
-          "O‘z-o‘zini kuzatish va tashqi kuzatish",
-          "Laboratoriya sharoitida",
-          "Eksperiment",
-          "dars davomida kuzatish"
-        ],
-        "correctAnswer": 0
-      },
-      {
-        "question": "….. odamni uning tarjimai holi bilan bog‘liq bo‘lgan hujjatlar orqali o‘rganish usuli.",
-        "options": [
-          "biografik metod",
-          "Eksperiment",
-          "Test",
-          "Ko‘zatish"
-        ],
-        "correctAnswer": 0
-      },
-      {
         "question": "Kishining psixologik xususiyatlarini maxsus tuzilgan savollarni o‘z ichiga olgan savolnomalar yordamida o‘rganish?",
         "options": [
           "Test",
           "Kuzatish",
           "Eksperiment",
           "Sotsiometriya"
-        ],
-        "correctAnswer": 0
-      },
-      {
-        "question": "Individual hayot davomida orttirilgan hatti-harakat shakllari…",
-        "options": [
-          "ko‘nikmalar",
-          "Instinklar",
-          "Reflekslar",
-          "aqliy hatti-harakatlar"
-        ],
-        "correctAnswer": 0
-      },
-      {
-        "question": "Harakatlar yoki harakatlar sistemasini esda olib qolish, esga tushirish, esda saqlash?",
-        "options": [
-          "To‘g‘ri javob yo‘q",
-          "ko‘rgazmali-obrazli",
-          "So‘z-mantiq",
-          "emotsioanal xotira"
         ],
         "correctAnswer": 0
       },

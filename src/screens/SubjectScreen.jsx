@@ -1,7 +1,5 @@
 import { SUBJECTS } from '../data/subjects/index.js';
 
-const SESSION_LIMIT = 20;
-
 export default function SubjectScreen({ studentName, onPick, onBack }) {
   return (
     <div className="container fade-up">
@@ -9,7 +7,8 @@ export default function SubjectScreen({ studentName, onPick, onBack }) {
         <div className="eyebrow">Salom, {studentName}</div>
         <h1 className="h1">Fanni tanlang</h1>
         <p className="lede">
-          Har bir testda {SESSION_LIMIT} ta tasodifiy savol. Javob tanlangach darhol izoh ko'rinadi.
+          Fan tanlangach <strong>Vaqtli</strong> yoki <strong>Barcha testlar</strong> rejimini
+          tanlay olasiz.
         </p>
       </div>
 

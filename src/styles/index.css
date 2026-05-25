@@ -836,3 +836,349 @@ a {
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* ===== Exam CTA (home) ===== */
+.exam-cta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 22px 22px;
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  text-align: left;
+  transition: 0.18s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.exam-cta:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.exam-cta-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.exam-cta-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.exam-cta-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 4px;
+}
+
+.exam-cta-title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+
+.exam-cta-tag {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+}
+
+.exam-cta-arrow {
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
+}
+
+/* ===== Big secondary card (Fan bo'yicha) ===== */
+.big-secondary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 18px 22px;
+  margin-top: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-align: left;
+  transition: 0.15s ease;
+}
+
+.big-secondary:hover {
+  border-color: var(--ink);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.big-secondary-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.big-secondary-title {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 2px;
+}
+
+.big-secondary-tag {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.big-secondary-arrow {
+  font-size: 20px;
+  color: var(--ink-3);
+  flex-shrink: 0;
+}
+
+/* ===== Mode selector ===== */
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 720px) {
+  .mode-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.mode-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-align: left;
+  transition: 0.15s ease;
+  width: 100%;
+  position: relative;
+}
+
+.mode-card:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.mode-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+.mode-card-icon-accent {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+.mode-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.mode-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin-bottom: 4px;
+}
+
+.mode-card-tag {
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-bottom: 12px;
+}
+
+.mode-card-points {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mode-card-points li {
+  font-size: 13px;
+  color: var(--ink-2);
+  padding-left: 18px;
+  position: relative;
+  line-height: 1.4;
+}
+
+.mode-card-points li::before {
+  content: '·';
+  position: absolute;
+  left: 6px;
+  top: -1px;
+  font-weight: 700;
+  color: var(--ink-3);
+}
+
+.mode-card-arrow {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+/* ===== Timer ===== */
+.quiz-head-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.timer.is-urgent {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: var(--danger-soft);
+  animation: timerPulse 1s ease-in-out infinite;
+}
+
+@keyframes timerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+/* ===== Section strip (exam) ===== */
+.section-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: -14px 0 22px;
+}
+
+.section-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--ink-3);
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.section-pill.is-current {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+
+/* ===== Endless stats strip ===== */
+.endless-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.endless-stat {
+  text-align: center;
+  padding: 6px;
+}
+
+.endless-stat-num {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.endless-stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.endless-stat-label.success {
+  color: var(--success);
+}
+
+.endless-stat-label.danger {
+  color: var(--danger);
+}
+
+@media (max-width: 480px) {
+  .exam-cta {
+    padding: 18px 16px;
+  }
+  .exam-cta-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+  }
+  .exam-cta-title {
+    font-size: 16px;
+  }
+  .mode-card {
+    padding: 18px;
+  }
+  .mode-card-arrow {
+    top: 18px;
+    right: 18px;
+  }
+}

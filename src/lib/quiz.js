@@ -7,31 +7,63 @@ function shuffle(arr) {
   return a;
 }
 
-export function buildSession(
-  subject,
-  opts = { shuffleQuestions: true, shuffleOptions: true, questionCount: 20 },
-) {
-  const limit = Math.min(opts.questionCount ?? subject.questions.length, subject.questions.length);
-  const pool = opts.shuffleQuestions ? shuffle(subject.questions) : subject.questions;
-  const baseQs = pool.slice(0, limit);
-  return baseQs.map((q) => {
-    if (!opts.shuffleOptions) {
-      return { ...q, options: q.options.slice(), correctAnswer: q.correctAnswer };
-    }
-    const idx = q.options.map((_, i) => i);
-    const sIdx = shuffle(idx);
-    return {
-      ...q,
-      options: sIdx.map((i) => q.options[i]),
-      correctAnswer: sIdx.indexOf(q.correctAnswer),
-    };
-  });
+function shuffleQuestion(q) {
+  const idx = q.options.map((_, i) => i);
+  const sIdx = shuffle(idx);
+  return {
+    ...q,
+    options: sIdx.map((i) => q.options[i]),
+    correctAnswer: sIdx.indexOf(q.correctAnswer),
+  };
+}
+
+export function buildTimedSession(subject, count = 20) {
+  const limit = Math.min(count, subject.questions.length);
+  return shuffle(subject.questions).slice(0, limit).map(shuffleQuestion);
+}
+
+export function pickRandomQuestion(subject, excludeIds = new Set()) {
+  const pool = subject.questions.filter((q) => !excludeIds.has(q.question));
+  const source = pool.length > 0 ? pool : subject.questions;
+  const q = source[Math.floor(Math.random() * source.length)];
+  return shuffleQuestion(q);
+}
+
+export function buildExam(subjects, perSubject = 10) {
+  const questions = [];
+  const sections = [];
+  let cursor = 0;
+  for (const s of subjects) {
+    const limit = Math.min(perSubject, s.questions.length);
+    const pool = shuffle(s.questions).slice(0, limit);
+    const chunk = pool.map(shuffleQuestion).map((q) => ({ ...q, subjectId: s.id }));
+    sections.push({
+      subjectId: s.id,
+      subjectName: s.name,
+      from: cursor,
+      to: cursor + chunk.length - 1,
+      count: chunk.length,
+    });
+    cursor += chunk.length;
+    questions.push(...chunk);
+  }
+  return { questions, sections };
 }
 
 export function formatDate(ts) {
   const d = new Date(ts);
   const pad = (n) => String(n).padStart(2, '0');
   return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+export function formatClock(seconds) {
+  const s = Math.max(0, Math.floor(seconds));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  const pad = (n) => String(n).padStart(2, '0');
+  if (h > 0) return `${h}:${pad(m)}:${pad(sec)}`;
+  return `${pad(m)}:${pad(sec)}`;
 }
 
 export function scoreColor(pct) {
