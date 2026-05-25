@@ -7,7 +7,7 @@ const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 const PER_QUESTION_SEC = 30;
 const QUESTION_COUNT = 20;
 
-export default function TimedQuizScreen({ subject, onFinish, onExit }) {
+export default function TimedQuizScreen({ subject, isPremium, onRequestPremium, onFinish, onExit }) {
   const questions = useMemo(() => buildTimedSession(subject, QUESTION_COUNT), [subject]);
   const total = questions.length;
 
@@ -75,6 +75,10 @@ export default function TimedQuizScreen({ subject, onFinish, onExit }) {
   }
 
   function goNext() {
+    if (!isPremium) {
+      onRequestPremium && onRequestPremium(`${subject.name} — Vaqtli rejim`);
+      return;
+    }
     if (idx < total - 1) setIdx(idx + 1);
   }
   function goPrev() {

@@ -7,7 +7,7 @@ const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 const EXAM_DURATION_SEC = 60 * 60;
 const PER_SUBJECT = 10;
 
-export default function ExamScreen({ subjects, onFinish, onExit }) {
+export default function ExamScreen({ subjects, isPremium, onRequestPremium, onFinish, onExit }) {
   const exam = useMemo(() => buildExam(subjects, PER_SUBJECT), [subjects]);
   const { questions, sections } = exam;
   const total = questions.length;
@@ -69,6 +69,10 @@ export default function ExamScreen({ subjects, onFinish, onExit }) {
   }
 
   function goNext() {
+    if (!isPremium) {
+      onRequestPremium && onRequestPremium('Sinov imtihoni');
+      return;
+    }
     if (idx < total - 1) setIdx(idx + 1);
   }
   function goPrev() {

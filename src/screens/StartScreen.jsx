@@ -1,13 +1,10 @@
 import { useState } from 'react';
 import ExamCta from '../components/ExamCta.jsx';
 import Modal from '../components/Modal.jsx';
-import { isAllowed } from '../data/allowedPhones.js';
-import { formatLive, isValidPhone, normalizePhone } from '../lib/phone.js';
 import { formatDate, scoreColor } from '../lib/quiz.js';
 
 export default function StartScreen({
   initialName,
-  initialPhone,
   history,
   onStartUser,
   onPickExam,
@@ -16,66 +13,31 @@ export default function StartScreen({
   onResetData,
 }) {
   const [name, setName] = useState(initialName ?? '');
-  const [phoneInput, setPhoneInput] = useState(() =>
-    initialPhone ? formatLive(initialPhone) : '+998 ',
-  );
   const [nameError, setNameError] = useState('');
-  const [phoneError, setPhoneError] = useState('');
   const [confirmReset, setConfirmReset] = useState(false);
   const [confirmExam, setConfirmExam] = useState(false);
 
-  const hasUser = !!(initialName && initialPhone);
+  const hasUser = !!(initialName && initialName.trim());
   const recent = history.slice(0, 4);
 
   function submit(e) {
     e.preventDefault();
     const trimmed = name.trim();
-    const normalized = normalizePhone(phoneInput);
-
-    let ok = true;
     if (!trimmed) {
       setNameError('Ismingizni kiriting');
-      ok = false;
-    } else if (trimmed.length < 2) {
+      return;
+    }
+    if (trimmed.length < 2) {
       setNameError("Ism kamida 2 ta belgi bo'lishi kerak");
-      ok = false;
-    } else {
-      setNameError('');
+      return;
     }
-
-    if (!isValidPhone(normalized)) {
-      setPhoneError("To'g'ri telefon raqami kiriting: +998 XX XXX XX XX");
-      ok = false;
-    } else if (!isAllowed(normalized)) {
-      setPhoneError("Bu raqam ro'yxatda yo'q. Administratorga murojaat qiling.");
-      ok = false;
-    } else {
-      setPhoneError('');
-    }
-
-    if (!ok) return;
-    onStartUser(trimmed, normalized);
+    setNameError('');
+    onStartUser(trimmed);
   }
 
   function handlePickExam() {
     if (!hasUser) return;
     setConfirmExam(true);
-  }
-
-  function handlePickSubjects() {
-    if (!hasUser) return;
-    onPickSubjects();
-  }
-
-  function handlePickUmumiy() {
-    if (!hasUser) return;
-    onPickUmumiy();
-  }
-
-  function handlePhoneChange(e) {
-    const v = formatLive(e.target.value);
-    setPhoneInput(v);
-    if (phoneError) setPhoneError('');
   }
 
   return (
@@ -87,8 +49,8 @@ export default function StartScreen({
         </h1>
         <p className="lede">
           {hasUser
-            ? "Sinov imtihoniga tushing yoki fan bo'yicha mashq qiling. Barcha natijalar shu qurilmada saqlanadi."
-            : "Ismingiz va telefon raqamingizni kiriting. Faqat ruxsat etilgan raqamlar saytga kira oladi."}
+            ? "Sinov imtihoniga tushing yoki fan bo'yicha mashq qiling. Natijalar shu qurilmada saqlanadi."
+            : 'Ismingizni yozing va boshlang.'}
         </p>
       </div>
 
@@ -114,41 +76,13 @@ export default function StartScreen({
             />
             {nameError && <p className="error-text">{nameError}</p>}
           </div>
-
-          <div style={{ height: 14 }} />
-
-          <div className="field">
-            <label className="label" htmlFor="phone-input">
-              Telefon raqami
-            </label>
-            <input
-              id="phone-input"
-              className={'input' + (phoneError ? ' has-error' : '')}
-              type="tel"
-              inputMode="tel"
-              placeholder="+998 90 123 45 67"
-              value={phoneInput}
-              onChange={handlePhoneChange}
-              autoComplete="tel"
-              maxLength={20}
-            />
-            {phoneError && <p className="error-text">{phoneError}</p>}
-          </div>
-
           <div style={{ height: 16 }} />
           <button type="submit" className="btn btn-primary btn-block">
-            Tekshirib davom etish
+            Davom etish
             <span aria-hidden style={{ fontSize: 18, lineHeight: 1 }}>
               →
             </span>
           </button>
-
-          <p
-            className="lede"
-            style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 12, textAlign: 'center' }}
-          >
-            Ma'lumotlar faqat shu qurilmada saqlanadi.
-          </p>
         </form>
       )}
 
@@ -156,7 +90,7 @@ export default function StartScreen({
         <>
           <ExamCta onStart={handlePickExam} />
 
-          <button type="button" className="big-secondary" onClick={handlePickSubjects}>
+          <button type="button" className="big-secondary" onClick={onPickSubjects}>
             <div className="big-secondary-icon" aria-hidden>
               ≡
             </div>
@@ -171,7 +105,7 @@ export default function StartScreen({
             </span>
           </button>
 
-          <button type="button" className="big-secondary" onClick={handlePickUmumiy}>
+          <button type="button" className="big-secondary" onClick={onPickUmumiy}>
             <div className="big-secondary-icon" aria-hidden>
               ⊕
             </div>
@@ -267,7 +201,6 @@ export default function StartScreen({
               onClick={() => {
                 onResetData();
                 setName('');
-                setPhoneInput('+998 ');
                 setConfirmReset(false);
               }}
             >
@@ -277,7 +210,7 @@ export default function StartScreen({
         }
       >
         <p>
-          Bu amal sizning ismingiz, telefon raqamingiz va barcha natijalar tarixini shu qurilmadan
+          Bu amal sizning ismingiz, premium statusi va barcha natijalar tarixini shu qurilmadan
           o'chiradi. Buni bekor qilib bo'lmaydi.
         </p>
       </Modal>

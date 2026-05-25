@@ -1,6 +1,4 @@
-import { formatPhone } from '../lib/phone.js';
-
-export default function TopBar({ canGoHome, onHome, studentName, studentPhone }) {
+export default function TopBar({ canGoHome, onHome, studentName, isPremium }) {
   return (
     <header className="topbar">
       <div className="brand">
@@ -8,10 +6,12 @@ export default function TopBar({ canGoHome, onHome, studentName, studentPhone })
         <span>Quiz</span>
       </div>
       <div className="topbar-right">
-        {studentName && studentPhone && (
-          <span className="user-chip" title={formatPhone(studentPhone)}>
+        {studentName && (
+          <span className="user-chip" title={studentName}>
             <span className="user-chip-name">{studentName}</span>
-            <span className="user-chip-phone">{formatPhone(studentPhone)}</span>
+            <span className={'user-chip-status ' + (isPremium ? 'is-premium' : 'is-free')}>
+              {isPremium ? '★ Premium' : 'Bepul'}
+            </span>
           </span>
         )}
         {canGoHome && (

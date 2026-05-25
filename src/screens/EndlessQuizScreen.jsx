@@ -5,7 +5,14 @@ import { pickRandomQuestion } from '../lib/quiz.js';
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 const RECENT_WINDOW = 30;
 
-export default function EndlessQuizScreen({ subject, onExit, showSubjectTag = false }) {
+export default function EndlessQuizScreen({
+  subject,
+  onExit,
+  showSubjectTag = false,
+  requirePremium = false,
+  isPremium = false,
+  onRequestPremium,
+}) {
   const seenRef = useRef([]);
   const [current, setCurrent] = useState(() => pickRandomQuestion(subject, new Set()));
   const [selected, setSelected] = useState(null);
@@ -26,13 +33,17 @@ export default function EndlessQuizScreen({ subject, onExit, showSubjectTag = fa
   }
 
   const next = useCallback(() => {
+    if (requirePremium && !isPremium) {
+      onRequestPremium && onRequestPremium(`${subject.name} — Barcha testlar`);
+      return;
+    }
     seenRef.current.push(current.question);
     if (seenRef.current.length > RECENT_WINDOW) seenRef.current.shift();
     const exclude = new Set(seenRef.current);
     setCurrent(pickRandomQuestion(subject, exclude));
     setSelected(null);
     setRevealed(false);
-  }, [current, subject]);
+  }, [current, subject, requirePremium, isPremium, onRequestPremium]);
 
   const accuracy = stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100);
 

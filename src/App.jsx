@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import TopBar from './components/TopBar.jsx';
+import PremiumModal from './components/PremiumModal.jsx';
 import StartScreen from './screens/StartScreen.jsx';
 import SubjectScreen from './screens/SubjectScreen.jsx';
 import ModeScreen from './screens/ModeScreen.jsx';
@@ -10,7 +11,7 @@ import ResultScreen from './screens/ResultScreen.jsx';
 import EndlessResultScreen from './screens/EndlessResultScreen.jsx';
 import ExamResultScreen from './screens/ExamResultScreen.jsx';
 import { SUBJECTS } from './data/subjects/index.js';
-import { isAllowed } from './data/allowedPhones.js';
+import { isPremiumPhone } from './data/allowedPhones.js';
 import {
   clearAll,
   getHistory,
@@ -55,14 +56,32 @@ export default function App() {
   const [endlessStats, setEndlessStats] = useState(null);
   const [examResult, setExamResult] = useState(null);
   const [history, setHistory] = useState(() => getHistory());
+  const [premiumModal, setPremiumModal] = useState({ open: false, feature: '' });
+
+  const isPremium = useMemo(
+    () => !!studentPhone && isPremiumPhone(studentPhone),
+    [studentPhone],
+  );
 
   const goHome = useCallback(() => setScreen(SCREEN.HOME), []);
 
-  const handleStartUser = useCallback((name, phone) => {
+  const handleStartUser = useCallback((name) => {
     setStudentName(name);
-    setStudentPhone(phone);
     saveUserName(name);
-    saveUserPhone(phone);
+  }, []);
+
+  const handleRequestPremium = useCallback((feature) => {
+    setPremiumModal({ open: true, feature });
+  }, []);
+
+  const handleClosePremium = useCallback(() => {
+    setPremiumModal({ open: false, feature: '' });
+  }, []);
+
+  const handleActivatePremium = useCallback((normalizedPhone) => {
+    setStudentPhone(normalizedPhone);
+    saveUserPhone(normalizedPhone);
+    setPremiumModal({ open: false, feature: '' });
   }, []);
 
   const handlePickSubjects = useCallback(() => setScreen(SCREEN.SUBJECTS), []);
@@ -151,10 +170,11 @@ export default function App() {
     setScreen(SCREEN.HOME);
   }, []);
 
-  // Saqlangan raqam ro'yxatdan chiqarilgan bo'lsa — avtomatik chiqarib yuborish
+  // Saqlangan premium telefon ro'yxatdan chiqarilgan bo'lsa — premium o'chadi
   useEffect(() => {
-    if (studentPhone && !isAllowed(studentPhone)) {
-      handleResetAll();
+    if (studentPhone && !isPremiumPhone(studentPhone)) {
+      setStudentPhone('');
+      saveUserPhone('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -165,7 +185,7 @@ export default function App() {
         canGoHome={screen !== SCREEN.HOME}
         onHome={goHome}
         studentName={studentName}
-        studentPhone={studentPhone}
+        isPremium={isPremium}
       />
 
       <main className="main">
@@ -188,7 +208,6 @@ export default function App() {
         {screen === SCREEN.HOME && (
           <StartScreen
             initialName={studentName}
-            initialPhone={studentPhone}
             history={history}
             onStartUser={handleStartUser}
             onPickExam={handlePickExam}
@@ -217,13 +236,21 @@ export default function App() {
         {screen === SCREEN.TIMED && subject && (
           <TimedQuizScreen
             subject={subject}
+            isPremium={isPremium}
+            onRequestPremium={handleRequestPremium}
             onFinish={handleTimedFinish}
             onExit={() => setScreen(SCREEN.MODE)}
           />
         )}
 
         {screen === SCREEN.ENDLESS && subject && (
-          <EndlessQuizScreen subject={subject} onExit={handleEndlessExit} />
+          <EndlessQuizScreen
+            subject={subject}
+            requirePremium
+            isPremium={isPremium}
+            onRequestPremium={handleRequestPremium}
+            onExit={handleEndlessExit}
+          />
         )}
 
         {screen === SCREEN.UMUMIY && (
@@ -233,6 +260,8 @@ export default function App() {
         {screen === SCREEN.EXAM && (
           <ExamScreen
             subjects={SUBJECTS}
+            isPremium={isPremium}
+            onRequestPremium={handleRequestPremium}
             onFinish={handleExamFinish}
             onExit={goHome}
           />
@@ -275,6 +304,13 @@ export default function App() {
           />
         )}
       </main>
+
+      <PremiumModal
+        open={premiumModal.open}
+        featureName={premiumModal.feature}
+        onClose={handleClosePremium}
+        onActivate={handleActivatePremium}
+      />
     </div>
   );
 }
