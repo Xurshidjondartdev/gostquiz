@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import TopBar from './components/TopBar.jsx';
 import StartScreen from './screens/StartScreen.jsx';
 import SubjectScreen from './screens/SubjectScreen.jsx';
@@ -10,12 +10,15 @@ import ResultScreen from './screens/ResultScreen.jsx';
 import EndlessResultScreen from './screens/EndlessResultScreen.jsx';
 import ExamResultScreen from './screens/ExamResultScreen.jsx';
 import { SUBJECTS } from './data/subjects/index.js';
+import { isAllowed } from './data/allowedPhones.js';
 import {
   clearAll,
   getHistory,
   getUserName,
+  getUserPhone,
   pushHistory,
   saveUserName,
+  saveUserPhone,
   storageAvailable,
 } from './lib/storage.js';
 
@@ -46,6 +49,7 @@ const UMUMIY_SUBJECT = {
 export default function App() {
   const [screen, setScreen] = useState(SCREEN.HOME);
   const [studentName, setStudentName] = useState(() => getUserName());
+  const [studentPhone, setStudentPhone] = useState(() => getUserPhone());
   const [subject, setSubject] = useState(null);
   const [timedResult, setTimedResult] = useState(null);
   const [endlessStats, setEndlessStats] = useState(null);
@@ -54,9 +58,11 @@ export default function App() {
 
   const goHome = useCallback(() => setScreen(SCREEN.HOME), []);
 
-  const handleStartName = useCallback((name) => {
+  const handleStartUser = useCallback((name, phone) => {
     setStudentName(name);
+    setStudentPhone(phone);
     saveUserName(name);
+    saveUserPhone(phone);
   }, []);
 
   const handlePickSubjects = useCallback(() => setScreen(SCREEN.SUBJECTS), []);
@@ -136,6 +142,7 @@ export default function App() {
   const handleResetAll = useCallback(() => {
     clearAll();
     setStudentName('');
+    setStudentPhone('');
     setHistory([]);
     setSubject(null);
     setTimedResult(null);
@@ -144,9 +151,22 @@ export default function App() {
     setScreen(SCREEN.HOME);
   }, []);
 
+  // Saqlangan raqam ro'yxatdan chiqarilgan bo'lsa — avtomatik chiqarib yuborish
+  useEffect(() => {
+    if (studentPhone && !isAllowed(studentPhone)) {
+      handleResetAll();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="app">
-      <TopBar canGoHome={screen !== SCREEN.HOME} onHome={goHome} />
+      <TopBar
+        canGoHome={screen !== SCREEN.HOME}
+        onHome={goHome}
+        studentName={studentName}
+        studentPhone={studentPhone}
+      />
 
       <main className="main">
         {!storageAvailable && (
@@ -168,8 +188,9 @@ export default function App() {
         {screen === SCREEN.HOME && (
           <StartScreen
             initialName={studentName}
+            initialPhone={studentPhone}
             history={history}
-            onStartName={handleStartName}
+            onStartUser={handleStartUser}
             onPickExam={handlePickExam}
             onPickSubjects={handlePickSubjects}
             onPickUmumiy={handlePickUmumiy}

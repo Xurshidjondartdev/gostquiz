@@ -1,4 +1,5 @@
 const LS_USER = 'quiz.user.v1';
+const LS_PHONE = 'quiz.phone.v1';
 const LS_HISTORY = 'quiz.history.v1';
 
 const memory = new Map();
@@ -59,6 +60,14 @@ export function saveUserName(name) {
   saveJSON(LS_USER, name);
 }
 
+export function getUserPhone() {
+  return loadJSON(LS_PHONE, '');
+}
+
+export function saveUserPhone(phone) {
+  saveJSON(LS_PHONE, phone);
+}
+
 export function getHistory() {
   const list = loadJSON(LS_HISTORY, []);
   return Array.isArray(list) ? list : [];
@@ -73,6 +82,7 @@ export function pushHistory(entry) {
 
 export function clearAll() {
   removeKey(LS_USER);
+  removeKey(LS_PHONE);
   removeKey(LS_HISTORY);
 }
 

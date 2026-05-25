@@ -1,110 +1,158 @@
 import { useState } from 'react';
 import ExamCta from '../components/ExamCta.jsx';
 import Modal from '../components/Modal.jsx';
+import { isAllowed } from '../data/allowedPhones.js';
+import { formatLive, isValidPhone, normalizePhone } from '../lib/phone.js';
 import { formatDate, scoreColor } from '../lib/quiz.js';
 
 export default function StartScreen({
   initialName,
+  initialPhone,
   history,
-  onStartName,
+  onStartUser,
   onPickExam,
   onPickSubjects,
   onPickUmumiy,
   onResetData,
 }) {
   const [name, setName] = useState(initialName ?? '');
-  const [error, setError] = useState('');
+  const [phoneInput, setPhoneInput] = useState(() =>
+    initialPhone ? formatLive(initialPhone) : '+998 ',
+  );
+  const [nameError, setNameError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [confirmReset, setConfirmReset] = useState(false);
   const [confirmExam, setConfirmExam] = useState(false);
 
-  const hasName = !!(initialName && initialName.trim());
+  const hasUser = !!(initialName && initialPhone);
   const recent = history.slice(0, 4);
 
-  function submitName(e) {
+  function submit(e) {
     e.preventDefault();
     const trimmed = name.trim();
+    const normalized = normalizePhone(phoneInput);
+
+    let ok = true;
     if (!trimmed) {
-      setError('Ismingizni kiriting');
-      return;
+      setNameError('Ismingizni kiriting');
+      ok = false;
+    } else if (trimmed.length < 2) {
+      setNameError("Ism kamida 2 ta belgi bo'lishi kerak");
+      ok = false;
+    } else {
+      setNameError('');
     }
-    if (trimmed.length < 2) {
-      setError("Ism kamida 2 ta belgi bo'lishi kerak");
-      return;
+
+    if (!isValidPhone(normalized)) {
+      setPhoneError("To'g'ri telefon raqami kiriting: +998 XX XXX XX XX");
+      ok = false;
+    } else if (!isAllowed(normalized)) {
+      setPhoneError("Bu raqam ro'yxatda yo'q. Administratorga murojaat qiling.");
+      ok = false;
+    } else {
+      setPhoneError('');
     }
-    onStartName(trimmed);
+
+    if (!ok) return;
+    onStartUser(trimmed, normalized);
   }
 
   function handlePickExam() {
-    if (!hasName) {
-      setError("Avval ismingizni kiriting va saqlang");
-      return;
-    }
+    if (!hasUser) return;
     setConfirmExam(true);
   }
 
   function handlePickSubjects() {
-    if (!hasName) {
-      setError("Avval ismingizni kiriting va saqlang");
-      return;
-    }
+    if (!hasUser) return;
     onPickSubjects();
   }
 
   function handlePickUmumiy() {
-    if (!hasName) {
-      setError("Avval ismingizni kiriting va saqlang");
-      return;
-    }
+    if (!hasUser) return;
     onPickUmumiy();
+  }
+
+  function handlePhoneChange(e) {
+    const v = formatLive(e.target.value);
+    setPhoneInput(v);
+    if (phoneError) setPhoneError('');
   }
 
   return (
     <div className="container fade-up">
       <div className="hero">
-        <div className="eyebrow">Quiz / O'zbek tilida</div>
+        <div className="eyebrow">GOST savollari</div>
         <h1 className="h1">
-          {hasName ? `Salom, ${initialName}` : '5 fan. 1001+ savol. O‘zingizni sinab ko‘ring.'}
+          {hasUser ? `Salom, ${initialName}` : "5 fan. 986+ savol. O‘zingizni sinab ko‘ring."}
         </h1>
         <p className="lede">
-          {hasName
+          {hasUser
             ? "Sinov imtihoniga tushing yoki fan bo'yicha mashq qiling. Barcha natijalar shu qurilmada saqlanadi."
-            : 'Ismingizni yozing va boshlang. Natijalar shu qurilmada saqlanadi — internet shart emas.'}
+            : "Ismingiz va telefon raqamingizni kiriting. Faqat ruxsat etilgan raqamlar saytga kira oladi."}
         </p>
       </div>
 
-      {!hasName && (
-        <form className="card" onSubmit={submitName} noValidate>
+      {!hasUser && (
+        <form className="card" onSubmit={submit} noValidate>
           <div className="field">
             <label className="label" htmlFor="name-input">
               Ismingiz
             </label>
             <input
               id="name-input"
-              className={'input' + (error ? ' has-error' : '')}
+              className={'input' + (nameError ? ' has-error' : '')}
               type="text"
               placeholder="Masalan, Asadbek"
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
-                if (error) setError('');
+                if (nameError) setNameError('');
               }}
               autoComplete="given-name"
               maxLength={40}
               autoFocus
             />
-            {error && <p className="error-text">{error}</p>}
+            {nameError && <p className="error-text">{nameError}</p>}
           </div>
+
+          <div style={{ height: 14 }} />
+
+          <div className="field">
+            <label className="label" htmlFor="phone-input">
+              Telefon raqami
+            </label>
+            <input
+              id="phone-input"
+              className={'input' + (phoneError ? ' has-error' : '')}
+              type="tel"
+              inputMode="tel"
+              placeholder="+998 90 123 45 67"
+              value={phoneInput}
+              onChange={handlePhoneChange}
+              autoComplete="tel"
+              maxLength={20}
+            />
+            {phoneError && <p className="error-text">{phoneError}</p>}
+          </div>
+
           <div style={{ height: 16 }} />
           <button type="submit" className="btn btn-primary btn-block">
-            Saqlash va davom etish
+            Tekshirib davom etish
             <span aria-hidden style={{ fontSize: 18, lineHeight: 1 }}>
               →
             </span>
           </button>
+
+          <p
+            className="lede"
+            style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 12, textAlign: 'center' }}
+          >
+            Ma'lumotlar faqat shu qurilmada saqlanadi.
+          </p>
         </form>
       )}
 
-      {hasName && (
+      {hasUser && (
         <>
           <ExamCta onStart={handlePickExam} />
 
@@ -219,6 +267,7 @@ export default function StartScreen({
               onClick={() => {
                 onResetData();
                 setName('');
+                setPhoneInput('+998 ');
                 setConfirmReset(false);
               }}
             >
@@ -228,8 +277,8 @@ export default function StartScreen({
         }
       >
         <p>
-          Bu amal sizning ismingiz va barcha natijalar tarixini shu qurilmadan o'chiradi. Buni
-          bekor qilib bo'lmaydi.
+          Bu amal sizning ismingiz, telefon raqamingiz va barcha natijalar tarixini shu qurilmadan
+          o'chiradi. Buni bekor qilib bo'lmaydi.
         </p>
       </Modal>
     </div>
