@@ -1,5 +1,7 @@
 import { SUBJECTS } from '../data/subjects/index.js';
 
+const SESSION_LIMIT = 20;
+
 export default function SubjectScreen({ studentName, onPick, onBack }) {
   return (
     <div className="container fade-up">
@@ -7,7 +9,7 @@ export default function SubjectScreen({ studentName, onPick, onBack }) {
         <div className="eyebrow">Salom, {studentName}</div>
         <h1 className="h1">Fanni tanlang</h1>
         <p className="lede">
-          Har bir fanda 10 ta savol. Javob tanlangach darhol izoh ko'rinadi.
+          Har bir testda {SESSION_LIMIT} ta tasodifiy savol. Javob tanlangach darhol izoh ko'rinadi.
         </p>
       </div>
 
@@ -19,7 +21,7 @@ export default function SubjectScreen({ studentName, onPick, onBack }) {
               <span className="subject-name">{s.name}</span>
               <span className="subject-tag">{s.tagline}</span>
             </div>
-            <span className="subject-count">{s.questions.length} ta</span>
+            <span className="subject-count">{s.questions.length}+ ta</span>
           </button>
         ))}
       </div>

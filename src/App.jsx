@@ -20,7 +20,7 @@ const SCREENS = {
   RESULT: 'result',
 };
 
-const SESSION_OPTS = { shuffleQuestions: true, shuffleOptions: true };
+const SESSION_OPTS = { shuffleQuestions: true, shuffleOptions: true, questionCount: 20 };
 
 export default function App() {
   const [screen, setScreen] = useState(SCREENS.HOME);

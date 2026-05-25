@@ -7,8 +7,13 @@ function shuffle(arr) {
   return a;
 }
 
-export function buildSession(subject, opts = { shuffleQuestions: true, shuffleOptions: true }) {
-  const baseQs = opts.shuffleQuestions ? shuffle(subject.questions) : subject.questions;
+export function buildSession(
+  subject,
+  opts = { shuffleQuestions: true, shuffleOptions: true, questionCount: 20 },
+) {
+  const limit = Math.min(opts.questionCount ?? subject.questions.length, subject.questions.length);
+  const pool = opts.shuffleQuestions ? shuffle(subject.questions) : subject.questions;
+  const baseQs = pool.slice(0, limit);
   return baseQs.map((q) => {
     if (!opts.shuffleOptions) {
       return { ...q, options: q.options.slice(), correctAnswer: q.correctAnswer };
