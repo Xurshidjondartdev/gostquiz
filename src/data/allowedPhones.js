@@ -24,6 +24,7 @@ import { normalizePhone } from '../lib/phone.js';
 
 const RAW = [
   '+998 93 946 84 30',
+  '+998 77 076 84 30',
 ];
 
 export const ALLOWED_PHONES = new Set(RAW.map(normalizePhone));
